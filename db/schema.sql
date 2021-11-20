@@ -1,10 +1,10 @@
 USE database qa;
 
 CREATE TABLE questions (
-  id INT PRIMARY KEY,
+  id SERIAL PRIMARY KEY ,
   product_id INT,
   body VARCHAR(2000),
-  date_written DATE,
+  date_written VARCHAR(200),
   asker_name VARCHAR(50),
   asker_email VARCHAR(200),
   reported BOOLEAN,
@@ -12,10 +12,10 @@ CREATE TABLE questions (
 );
 
 CREATE TABLE answers (
-  id INT PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   question_id INT,
   body VARCHAR(2000),
-  date_written DATE,
+  date_written VARCHAR(200),
   answerer_name VARCHAR(50),
   answerer_email VARCHAR(200),
   reported BOOLEAN,
@@ -23,7 +23,7 @@ CREATE TABLE answers (
 );
 
 CREATE TABLE photos (
-  id INT PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   answer_id INT,
   FOREIGN KEY (answer_id) REFERENCES answers(id),
   url TEXT
