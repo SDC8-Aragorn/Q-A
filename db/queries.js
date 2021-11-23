@@ -43,7 +43,7 @@ const getAnswersForQuestion = async (qID) => {
     return 'No question ID provided';
   }
   const query = {
-    text: 'SELECT id, body, date_written, answerer_name, helpful, reported FROM answers WHERE question_id = $1',
+    text: 'SELECT id, body, date_written, answerer_name, helpful, reported FROM answers WHERE question_id = $1 LIMIT 5',
     values: [qID],
   }
   let answersObj = {};
@@ -131,7 +131,7 @@ const getPhotosForAnswer = async (aID) => {
 
 const postQuestion = async (pID, body, name, email) => {
   if (pID === undefined) {
-    return 'no.';
+    return 'error';
   }
   if (body === undefined) {
     body = `${name} has nothing to say, but would like to feel included`;
@@ -156,10 +156,10 @@ const postQuestion = async (pID, body, name, email) => {
 };
 
 const postAnswer = async (qID, body, name, email, photos) => {
-  qID = parseInt(qID, 10);
   if (qID === undefined) {
-    return 'no.';
+    return 'error';
   }
+  qID = parseInt(qID, 10);
   if (body === undefined) {
     body = `${name} has nothing to say, but would like to feel included`;
   }

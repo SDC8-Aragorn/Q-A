@@ -6,14 +6,17 @@ const port = 8080;
 const app = express();
 
 app.use(express.json());
-app.listen(port, () => console.log('app listening on port 8080!'));
+app.listen(port, () => console.log('App listening on port 8080!'));
 
 // Put api calls here!
 // TODO: allow for page and count ints to actually do something
 
 app.get('/qa/questions', (req, res) => {
   let result;
-  console.log('request recieved!');
+  if (req.query.product_id === undefined) {
+    res.status(400).end();
+    return;
+  }
   db.getQuestionsForProduct(req.query.product_id, req.query.page, req.query.count).then(async (data) => {
     let arrayOfQuestions= [];
     for (let i = 0; i < data.rows.length; i++) {
@@ -81,7 +84,13 @@ app.get('/qa/questions/:question_id/answers', (req, res) => {
 app.post('/qa/questions', (req, res) => {
   const { body, name, email, product_id } = req.body;
   db.postQuestion(product_id, body, name, email)
-    .then(() => res.status(201).end());
+    .then((response) => {
+      if (response === 'error') {
+        res.status(400).end();
+      } else {
+        res.status(201).end()
+      }
+    });
 });
 
 app.post('/qa/questions/:question_id/answers', (req, res) => {
@@ -90,7 +99,13 @@ app.post('/qa/questions/:question_id/answers', (req, res) => {
   const { body, name, email, photos } = req.body;
   // send this information to one query endpoint
   db.postAnswer(questionID, body, name, email, photos)
-    .then(() => res.status(201).end());
+    .then((response) => {
+      if (response === 'error') {
+        res.status(400).end();
+      } else {
+        res.status(201).end();
+      }
+    });
   // once a promise is returned
   // send response to client
 });
