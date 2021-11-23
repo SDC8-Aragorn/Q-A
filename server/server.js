@@ -1,6 +1,7 @@
 const express = require('express');
 const axios = require('axios');
 const db = require('../db/queries.js');
+require('newrelic');
 
 const port = 8080;
 const app = express();

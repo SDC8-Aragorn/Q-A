@@ -11,6 +11,11 @@ CREATE TABLE questions (
   helpful INT
 );
 
+CREATE INDEX question ON questions (
+  id,
+  product_id,
+);
+
 CREATE TABLE answers (
   id SERIAL PRIMARY KEY,
   question_id INT,
@@ -22,9 +27,19 @@ CREATE TABLE answers (
   helpful INT
 );
 
+CREATE INDEX answer ON answers (
+  id,
+  question_id,
+);
+
 CREATE TABLE photos (
   id SERIAL PRIMARY KEY,
   answer_id INT,
   FOREIGN KEY (answer_id) REFERENCES answers(id),
   url TEXT
+);
+
+CREATE INDEX photo ON photos (
+  id,
+  answer_id
 );
