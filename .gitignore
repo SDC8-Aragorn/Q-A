@@ -1,1 +1,4 @@
 *.config.js
+newrelic.js
+sdckey.txt
+sdckey.txt.pub

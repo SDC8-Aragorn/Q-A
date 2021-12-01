@@ -9,6 +9,7 @@ CREATE TABLE questions (
   asker_email VARCHAR(200),
   reported BOOLEAN,
   helpful INT
+  -- FOREIGN KEY (product_id) REFERENCES (products(id))
 );
 
 CREATE INDEX question ON questions (
@@ -25,6 +26,7 @@ CREATE TABLE answers (
   answerer_email VARCHAR(200),
   reported BOOLEAN,
   helpful INT
+  FOREIGN KEY (question_id) REFERENCES (questions(id))
 );
 
 CREATE INDEX answer ON answers (

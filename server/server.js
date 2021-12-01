@@ -1,7 +1,8 @@
+const newrelic = require('newrelic');
 const express = require('express');
 const axios = require('axios');
 const db = require('../db/queries.js');
-require('newrelic');
+
 
 const port = 8080;
 const app = express();
@@ -19,46 +20,7 @@ app.get('/qa/questions', (req, res) => {
     return;
   }
   db.getQuestionsForProduct(req.query.product_id, req.query.page, req.query.count).then(async (data) => {
-    let arrayOfQuestions= [];
-    for (let i = 0; i < data.rows.length; i++) {
-      let question = data.rows[i];
-      if(!question.reported) {
-        let epoc = parseInt(question.date_written, 10);
-        let d = new Date(epoc);
-        let formattedQuestion = {
-          question_id: question.id,
-          question_body: question.body,
-          question_date: d,
-          asker_name: question.asker_name,
-          question_helpfulness: question.helpful,
-          reported: question.reported,
-        };
-        arrayOfQuestions.push(formattedQuestion);
-      }
-    }
-    if (data.rows.length === 0) {
-      result = {
-        product_id: req.query.product_id,
-        result: data.rows,
-      }
-      res.status(200).send(result);
-    }
-    let count = 0;
-    for (let i = 0; i < arrayOfQuestions.length; i++) {
-      let question = arrayOfQuestions[i];
-      let answers = await db.getAnswersForQuestion(question.question_id)
-      .then((data) => {
-        count++;
-        question.answers = data;
-        if (count === arrayOfQuestions.length) {
-          result = {
-            product_id: req.query.product_id,
-            result: arrayOfQuestions,
-          };
-          res.status(200).send(result);
-        }
-      });
-    }
+    res.status(200).send(data);
   });
 });
 
