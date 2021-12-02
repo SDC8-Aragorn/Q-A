@@ -1,7 +1,7 @@
 USE database qa;
 
 CREATE TABLE questions (
-  id SERIAL PRIMARY KEY ,
+  id SERIAL PRIMARY KEY,
   product_id INT,
   body VARCHAR(2000),
   date_written VARCHAR(200),
@@ -14,7 +14,7 @@ CREATE TABLE questions (
 
 CREATE INDEX question ON questions (
   id,
-  product_id,
+  product_id
 );
 
 CREATE TABLE answers (
@@ -25,13 +25,13 @@ CREATE TABLE answers (
   answerer_name VARCHAR(50),
   answerer_email VARCHAR(200),
   reported BOOLEAN,
-  helpful INT
-  FOREIGN KEY (question_id) REFERENCES (questions(id))
+  helpful INT,
+  FOREIGN KEY (question_id) REFERENCES questions(id)
 );
 
 CREATE INDEX answer ON answers (
   id,
-  question_id,
+  question_id
 );
 
 CREATE TABLE photos (
