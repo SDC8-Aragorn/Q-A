@@ -31,7 +31,7 @@ const getQuestionsForProduct = (pID, page, count) => {
   const offset = (page - 1) * count;
   const limit = count;
   const query = {
-    text: 'SELECT questions.id, coalesce(json_object_agg(answers.id, jsonb_build_object(\'id\', answers.id, \'body\', answers.body, \'date\', answers.date_written, \'answerer_name\', answers.answerer_name, \'helpfulness\', answers.helpful, \'photos\', p.photos_array)) FILTER (WHERE answers.id IS NOT NULL)) AS answers FROM questions LEFT JOIN answers ON questions.id = answers.question_id CROSS JOIN LATERAL( SELECT coalesce(json_agg(jsonb_build_object(\'id\', p.id, \'url\', p.url)) FILTER (WHERE p.id IS NOT NULL)) AS photos_array FROM photos p WHERE answer_id = answers.id) p WHERE questions.product_id = $1 AND questions.reported = FALSE AND answers.reported = FALSE GROUP BY questions.id, answers.id ORDER BY questions.id, answers.id ASC LIMIT $2 OFFSET $3',
+    text: 'SELECT questions.id, questions.body, questions.date_written, questions.asker_name, questions.date_written, questions.helpful, questions.reported, coalesce(json_object_agg(answers.id, jsonb_build_object(\'id\', answers.id, \'body\', answers.body, \'date\', answers.date_written, \'answerer_name\', answers.answerer_name, \'helpfulness\', answers.helpful, \'photos\', p.photos_array)) FILTER (WHERE answers.id IS NOT NULL)) AS answers FROM questions LEFT JOIN answers ON questions.id = answers.question_id CROSS JOIN LATERAL( SELECT coalesce(json_agg(jsonb_build_object(\'id\', p.id, \'url\', p.url)) FILTER (WHERE p.id IS NOT NULL)) AS photos_array FROM photos p WHERE answer_id = answers.id) p WHERE questions.product_id = $1 AND questions.reported = FALSE AND answers.reported = FALSE GROUP BY questions.id, answers.id ORDER BY questions.id, answers.id ASC LIMIT $2 OFFSET $3',
     values: [pID, limit, offset],
   }
   return (pool.query(query)
@@ -41,6 +41,11 @@ const getQuestionsForProduct = (pID, page, count) => {
         let question = data.rows[i];
         let epoc = parseInt(question.date_written, 10);
         let d = new Date(epoc);
+        for (let key in question.answers) {
+          if (!question.answers[key].photos) {
+            question.answers[key].photos = [];
+          }
+        }
         let formattedQuestion = {
           question_id: question.id,
           question_body: question.body,
